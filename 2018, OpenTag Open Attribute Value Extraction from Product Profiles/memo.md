@@ -141,8 +141,10 @@ Currently, BiLSTM-CRF models as above is state-of-the-art for NER.
 | TF   | tag flip          |
 
 # 変数
-a : Attribute
-A : Attention Matrixg
-U : unlabeled pool
-H : blind held-out test set
-L : initial labeled set
+- a : Attribute
+- A : Attention Matrixg
+- U : unlabeled pool
+- H : blind held-out test set
+- L : initial labeled set
+
+$x$
