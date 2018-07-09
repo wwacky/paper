@@ -7,16 +7,16 @@ https://arxiv.org/pdf/1806.01264.pdf
 | year         | 2018                                                                                                                              |
 | organization | KDD                                                                                                                               |
 
-# 要約
+# 要約
 
-新規性を主張しているポイント
+新規性を主張しているポイント
 - RNN(BiLSTM)とCRFを結合した問題として定式化した
   - LSTM+CRF自体は既に存在しているがブラックボックスで説明不可能。本研究ではattentionメカニズムによりモデル解釈が可能
 - ユーザにモデルの決定を対話的に説明するための新しいattentionメカニズムを開発した
 - 手で作った学習データが少なくて済む新しいサンプリング手法を提案した
   - 通常の3分の1程度の150個のアノテーションサンプルで、最先端の手法を超える83%のF値を出した
 
-提案手法
+提案手法
 - OpenTag:BiLSTM-CRF with Attention
   - 手法の特徴
     - Open World Assumption : 学習時に無い新しい属性値を見つけることができる。(書いてないので恐らく属性は定義されたもののみ)
@@ -26,29 +26,29 @@ https://arxiv.org/pdf/1806.01264.pdf
   - 構成
     - word sequence(入力データ) → word embedding → BiLSTM → attention Layer → CRFで{B,I,O,E}を付ける
   - active learning
-    - 最初に少数のラベル付データを用意(100個程度)。その後、学習しながらルールに従ってラベル付対象のデータを選択し、人間がラベル付する
-      - 人手で最初に大量の学習データを用意するよりは、学習しながら精度向上に有効なデータにラベリングした方が人への負荷は少ない
-    - ラベル付されていないデータに対して現在のエポックのパラメータセットと前回のエポックのパラメータセットでタグを付与。付与されたタグが異なる個数が多いものをラベリングの対象とする
-  - 結果の解釈(attentionの効果)
-    - attention matrixを見ると抽出に影響している単語が確認できる(Fig3参照)
+    - 最初に少数のラベル付データを用意(100個程度)。その後、学習しながらルールに従ってラベル付対象のデータを選択し、人間がラベル付する
+      - 人手で最初に大量の学習データを用意するよりは、学習しながら精度向上に有効なデータにラベリングした方が人への負荷は少ない
+    - ラベル付されていないデータに対して現在のエポックのパラメータセットと前回のエポックのパラメータセットでタグを付与。付与されたタグが異なる個数が多いものをラベリングの対象とする
+  - 結果の解釈(attentionの効果)
+    - attention matrixを見ると抽出に影響している単語が確認できる(Fig3参照)
 
 手法の評価
 - 評価対象のデータ。レコードは1,000件以下(Table 3参照)
   - ドッグフード(属性：ブランド、味、容量。属性を単独で抽出するパターンと、3属性を同時に抽出するパターンで検証)
   - カメラ(属性：ブランド)
   - 洗剤(属性：香り)
-- 比較対象
+- 比較対象
   - Baseline：BiLSTM[10]
   - state-of-the-art:BiLSTM
   - 提案手法:OpenTag
-- Accuracy、Recall、F値で評価。提案手法がだいたい高い(Table4参照)
-- 未知語に対する抽出精度も高い。既往研究との比較はなし(Table5参照)
-- 提案したactive learningも既存手法よりエポックに対する精度向上が早い(Figure5,6参照)
+- Accuracy、Recall、F値で評価。提案手法がだいたい高い(Table4参照)
+- 未知語に対する抽出精度も高い。既往研究との比較はなし(Table5参照)
+- 提案したactive learningも既存手法よりエポックに対する精度向上が早い(Figure5,6参照)
 
 所感
 - ECの商品説明は文法構造がなく単語の羅列になっているので、スパース性の考慮は同様に必要な気もする
 - 人が用意する学習データは少なくて済むが、最初に150個用意するのではなく随時データを追加になるので運用方法は考える必要がある
-  - 人がラベリングするデータの個数は減るので人への負荷は下がるかもしれないが、今の仕組みだとエポック毎にactive learningが走ってしまうので人のラベリングが学習時のボトルネックになってしまう
+  - 人がラベリングするデータの個数は減るので人への負荷は下がるかもしれないが、今の仕組みだとエポック毎にactive learningが走ってしまうので人のラベリングが学習時のボトルネックになってしまう
 - 1つのドメインに対しては1つの属性より複数属性を同時にやった方が精度が高くなるのは直感的に分かる
   - ドメインごとに学習を分けているので、複数ドメインのデータを同時に学習するのは効率が悪いのかもしれない(本文には記載なし)
 
@@ -74,7 +74,7 @@ OpenTagの構成の全体像
 
 ![Fig2](img/7eeb56cfdbee622b13085e0327dcc754.png =600x)
 
-- Fig2はword embedding に「duck , fillet mignon and ranch raised lamb flavor」の最後の4文字が渡されてタグが予測されている状況を表している(Table1のBIOEと一緒に見ると分かりやすい)。
+- Fig2はword embedding に「duck , fillet mignon and ranch raised lamb flavor」の最後の4文字が渡されてタグが予測されている状況を表している(Table1のBIOEと一緒に見ると分かりやすい)。
 - 入力された文字列はWord Embeddingでベクトル表現される
 - ベクトル表現された単語はBiLSTMの入力となり、LSTMの出力は隠れ層のままattentionレイヤーへの入力となる
 - attentionレイヤーの出力値はCRF層の入力となり、{B,I,O,E}のタグ付けが実施される
@@ -86,19 +86,19 @@ OpenTagの構成の全体像
 ## 4 OPENTAG: ACTIVE LEARNING
 
 - leanerがラベル付けされていないプールされたデータから、ラベリングして欲しいサンプルを選択する
-- 最初に少数のラベル付されたデータセット$L$を用意し、leanerが対話的に大量のラベル付けされていないデータ$U$からラベル付して欲しいデータを要求する
+- 最初に少数のラベル付されたデータセット$L$を用意し、leanerが対話的に大量のラベル付けされていないデータ$U$からラベル付して欲しいデータを要求する
   - ラベル付けして欲しいデータはquery strategy $Q$で選ばれる
   - ラベル付けされたデータは$L$に追加される
   - このラベル付は閾値を満たすまで繰り返される
 - active learningのbaseline : least confidence(LC)
-  - confidentが最も小さいサンプルをラベリングの対象にする
+  - confidentが最も小さいサンプルをラベリングの対象にする
   - 本研究だとCRFの出力のconfidenceを用いる
 - avtive learningの提案手法 : tag flip
   - least confidenceには欠点が2つある
     - confidenceはタグ付与確率であって、タグ付けが正しかったかどうかは反映されない
-    - タグ付けの規則性が明確になった時に他のタグには効果が薄い
+    - タグ付けの規則性が明確になった時に他のタグには効果が薄い
   - tag flipではタグの付与が困難だった度合いを元にquery strategy を組む
-  - エポックeとe-1のそれぞれのパラメータ $\Psi^e$ $\Psi^{e-1}$ を用いてラベル付されていないデータUのデータに対してタグ付けを行う。その時にシーケンスの単語それぞれにタグが付与されるが、$\Psi^e$ $\Psi^{e-1}$ で付与されたタグが最も多いデータを人間にタグ付けしてもらうデータとして選択する(だからtag flip)
+  - エポックeとe-1のそれぞれのパラメータ $\Psi^e$ $\Psi^{e-1}$ を用いてラベル付されていないデータUのデータに対してタグ付けを行う。その時にシーケンスの単語それぞれにタグが付与されるが、$\Psi^e$ $\Psi^{e-1}$ で付与されたタグが最も多いデータを人間にタグ付けしてもらうデータとして選択する(だからtag flip)
   - ラベル付する対象のデータはバッチ毎に行う(Algorithm1を見ると分かる)
 
 
@@ -111,7 +111,7 @@ OpenTagの構成の全体像
 - TensorflowとKerasを使用。マシンは72コア
 
 - 埋め込み表現のためにGloVeを用いて学習済みの単語ベクトル100次元を利用。
-- LSTMの隠れ層は100層。出力は200次元
+- LSTMの隠れ層は100層。出力は200次元
 - ドロップアウト率:0.4
 - 最適化にはAdamを利用。バッチサイズは32。
 - 500エポック学習し、最後の20エポックで評価を行った
@@ -119,7 +119,7 @@ OpenTagの構成の全体像
 ### 5.2：Data sets
 - ドッグフード、カメラ、洗剤の3ドメインのデータを利用
 - 利用した商品データはAmazon.com公式ページのタイトル、商品説明、箇条書き
-- 利用可能な属性はドメインごとに定義する。OpenTagもドメインごとに学習
+- 利用可能な属性はドメインごとに定義する。OpenTagもドメインごとに学習
 - サンプル数と抽出された属性数はTable3参照
 - 学習とテストではデータは重複しない
 
@@ -161,7 +161,7 @@ descriptionといった文脈がわかりやすいものだと最大でstate-of-
 
 
 
-**Joint extraction of multi-attribute values**
+**Joint extraction of multi-attribute values**
 
 複数の属性値を抽出できるかのテスト。brand、favor、capacityをドッグフードのデータのtitles(disjoint split学習とテストで属性が被らないsplit)でテスト。{B,I,O,E}を使う。属性aごとに{B,I,E}をつける。
 
@@ -257,11 +257,11 @@ Currently, BiLSTM-CRF models as above is state-of-the-art for NER.
 - $H$ : blind held-out test set
 - $L$ : initial labeled set
 - $d$ : embedding dimension
-- $E$ : epochs
+- $E$ : epochs
 - $e$ : epoch(embeddingと被ってる・・・)
 - $e_t$ : embedding vector
 - $h_t$ : hidden state representation
-- $I()$ : indicator function that assumes the value 1 when the argument is true, and 0 otherwise
+- $I()$ : indicator function that assumes the value 1 when the argument is true, and 0 otherwise
 - $\langle l_t \rangle$ : attention-focused hidden state representation
 - $Q^{tf}$ : the number of tag flips of tokens of a sequence across successive epochs
 - $t$ : time
