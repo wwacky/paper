@@ -158,38 +158,6 @@
   right: 0;
   top: 50%;
 }
-.markdown-preview-plus-view .flash {
-  -webkit-animation: flash 1s ease-out;
-  -webkit-animation-iteration-count: 1;
-  outline: 1px solid rgba(255, 0, 0, 0);
-}
-@-webkit-keyframes flash {
-  0% {
-    outline-color: rgba(255, 0, 0, 0);
-  }
-  50% {
-    outline-color: #ff0000;
-  }
-  100% {
-    outline-color: rgba(255, 0, 0, 0);
-  }
-}
-.markdown-preview-plus-view pre.editor-colors {
-  display: block;
-  overflow: auto;
-  white-space: pre-line;
-}
-.markdown-preview-plus-view pre.editor-colors .line {
-  display: inline;
-}
-@media print {
-  .markdown-preview-plus-view pre.editor-colors {
-    overflow: visible !important;
-  }
-  .markdown-preview-plus-view pre.editor-colors .line {
-    white-space: pre-wrap !important;
-  }
-}
 .markdown-preview-plus-view ul.contains-task-list li.task-list-item {
   position: relative;
   list-style-type: none;
@@ -1139,6 +1107,22 @@ pre.editor-colors .fold-marker:after {
 <li>ドッグフード(属性：ブランド、味、容量。属性を単独で抽出するパターンと、3属性を同時に抽出するパターンで検証)</li>
 <li>カメラ(属性：ブランド)</li>
 <li>洗剤(属性：香り)</li>
+<li>属性値はマルチワードも含む(例えばranch raised lambで1つの属性値)</li>
+<li>属性値のイメージ
+<ul>
+<li>抽出対象の属性: brand, flavor, size</li>
+<li>商品タイトル: “PACK OF 5 - CESAR Canine Cuisine Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12
+Count)"</li>
+<li>商品説明 : “Variety pack includes: 6 trays of Fillet mignon flavor in meaty juices …"</li>
+<li>期待する抽出される結果
+<ul>
+<li>brand : ‘Cesar’</li>
+<li>flavor : ‘Fillet Mignon’ ‘Porterhouse Steak’</li>
+<li>size : ‘6 trays’</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>比較対象
@@ -1148,7 +1132,11 @@ pre.editor-colors .fold-marker:after {
 <li>提案手法:OpenTag</li>
 </ul>
 </li>
-<li>Accuracy、Recall、F値で評価。提案手法がだいたい高い(Table4参照)</li>
+<li>Accuracy、Recall、F値で評価。提案手法がだいたい高い(Table4参照)
+<ul>
+<li>属性を単独で学習するより、3つの属性を同時に学習したほうが性能が良い（ドッグフードのデータで検証）</li>
+</ul>
+</li>
 <li>未知語に対する抽出精度も高い。既往研究との比較はなし(Table5参照)</li>
 <li>提案したactive learningも既存手法よりエポックに対する精度向上が早い(Figure5,6参照)</li>
 </ul>
@@ -1167,6 +1155,37 @@ pre.editor-colors .fold-marker:after {
 </li>
 </ul>
 <h1>各章のメモ</h1>
+<h2>1 INTRODUCTION</h2>
+<ul>
+<li>Fig1の例
+<ul>
+<li>The product title “Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12 Count)”</li>
+<li>属性と属性値
+<ul>
+<li>“12 count"(size)</li>
+<li>“Fillet Mignon” (flavor)</li>
+<li>“Porterhouse Steak” (flavor)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="img/affee7b503819f3e13ab5a225b96a002.png" alt="Fig1" width="800"></p>
+<h2>2 OVERVIEW</h2>
+<h3>2.1 Problem Definition</h3>
+<ul>
+<li>抽出対象の属性: brand, flavor, size</li>
+<li>商品タイトル: “PACK OF 5 - CESAR Canine Cuisine Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12
+Count)"</li>
+<li>商品説明 : “Variety pack includes: 6 trays of Fillet mignon flavor in meaty juices …"</li>
+<li>期待する抽出される結果
+<ul>
+<li>brand : ‘Cesar’</li>
+<li>flavor : ‘Fillet Mignon’ ‘Porterhouse Steak’</li>
+<li>size : ‘6 trays’</li>
+</ul>
+</li>
+</ul>
 <h2>3：OPENTAG MODEL: EXTRACTION VIA SEQUENCE TAGGING</h2>
 <h3>3.1 Bidirectional LSTM (BiLSTM) Model</h3>
 <h3>3.2 Tag Sequence Modeling with Conditional Random Fields and BiLSTM</h3>

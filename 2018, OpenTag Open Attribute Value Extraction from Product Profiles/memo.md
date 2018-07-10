@@ -37,11 +37,22 @@ https://arxiv.org/pdf/1806.01264.pdf
   - ドッグフード(属性：ブランド、味、容量。属性を単独で抽出するパターンと、3属性を同時に抽出するパターンで検証)
   - カメラ(属性：ブランド)
   - 洗剤(属性：香り)
+  - 属性値はマルチワードも含む(例えばranch raised lambで1つの属性値)
+  - 属性値のイメージ
+    - 抽出対象の属性: brand, flavor, size
+    - 商品タイトル: “PACK OF 5 - CESAR Canine Cuisine Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12
+    Count)"
+    - 商品説明 : “Variety pack includes: 6 trays of Fillet mignon flavor in meaty juices ..."
+    - 期待する抽出される結果
+      - brand : ‘Cesar’
+      - flavor : ‘Fillet Mignon’ ‘Porterhouse Steak’
+      - size : ‘6 trays’
 - 比較対象
   - Baseline：BiLSTM[10]
   - state-of-the-art:BiLSTM
   - 提案手法:OpenTag
 - Accuracy、Recall、F値で評価。提案手法がだいたい高い(Table4参照)
+  - 属性を単独で学習するより、3つの属性を同時に学習したほうが性能が良い（ドッグフードのデータで検証）
 - 未知語に対する抽出精度も高い。既往研究との比較はなし(Table5参照)
 - 提案したactive learningも既存手法よりエポックに対する精度向上が早い(Figure5,6参照)
 
@@ -53,6 +64,29 @@ https://arxiv.org/pdf/1806.01264.pdf
   - ドメインごとに学習を分けているので、複数ドメインのデータを同時に学習するのは効率が悪いのかもしれない(本文には記載なし)
 
 # 各章のメモ
+
+## 1 INTRODUCTION
+
+- Fig1の例
+  - The product title “Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12 Count)”
+  - 属性と属性値
+    - “12 count"(size)
+    - “Fillet Mignon” (flavor)
+    - “Porterhouse Steak” (flavor)
+
+![Fig1](img/affee7b503819f3e13ab5a225b96a002.png =800x)
+
+## 2 OVERVIEW
+### 2.1 Problem Definition
+
+- 抽出対象の属性: brand, flavor, size
+- 商品タイトル: “PACK OF 5 - CESAR Canine Cuisine Variety Pack Fillet Mignon and Porterhouse Steak Dog Food (12
+Count)"
+- 商品説明 : “Variety pack includes: 6 trays of Fillet mignon flavor in meaty juices ..."
+- 期待する抽出される結果
+  - brand : ‘Cesar’
+  - flavor : ‘Fillet Mignon’ ‘Porterhouse Steak’
+  - size : ‘6 trays’
 
 ## 3：OPENTAG MODEL: EXTRACTION VIA SEQUENCE TAGGING
 
