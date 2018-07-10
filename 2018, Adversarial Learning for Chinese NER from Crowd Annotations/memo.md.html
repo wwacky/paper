@@ -1080,6 +1080,7 @@ pre.editor-colors .fold-marker:after {
 <li>Worker-Adversarialを別途設けて、common BiLSTMのウェイトを学習を行う</li>
 </ul>
 </li>
+<li>BIOEスキーマでラベル付</li>
 </ul>
 </li>
 </ul>
@@ -1105,11 +1106,11 @@ pre.editor-colors .fold-marker:after {
 </li>
 <li>アノテーション
 <ul>
-<li>アノテーションガイドラインのドキュメントを与え、tipsを15分間教え、20個の例を提供した</li>
+<li>アノテーションガイドラインのドキュメントを与え、tipsを15分間教え、20個の例を提供した</li>
 <li>対話ログ
 <ul>
 <li>ランダムに20,000センテンスを選択し、43人の大学生がアノテーションを実施。1つのセンテンスを3人が行う。割り振り方法は不明</li>
-<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外</li>
+<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外</li>
 <li>最終的に16,948センテンスにアノテーションが行われた</li>
 <li>ラベル付け後に1,000センテンスをランダムサンプリングし、熟練者によるアノテーションを実施し、真のデータとした</li>
 </ul>
@@ -1117,7 +1118,7 @@ pre.editor-colors .fold-marker:after {
 <li>ECの商品タイトル・クエリ
 <ul>
 <li>5人の大学生がアノテーションを実施。1つのセンテンスを2人が行う。割り振り方法は不明</li>
-<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外</li>
+<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外</li>
 <li>ラベル付け後に400センテンスをランダムサンプリングし、熟練者によるアノテーションを実施し、真のデータとした</li>
 </ul>
 </li>
@@ -1140,7 +1141,7 @@ pre.editor-colors .fold-marker:after {
 <ul>
 <li>クラウドソーシングの結果をそのまま使うのは面白いけど、性能(Table2 3)を見るとAdversarial learningではなく、DL使わない既存の手法でもよさそう。CRF-MAとか</li>
 <li>多数決をすれば必ずしも良くなるわけではないというのも参考になる。ただ、この研究の比較では多数決をすると純粋にデータが減るので、多数決したデータ件数が多数決していないものと同じであれば品質勝負で性能が上回るかもしれないので、コストをかけて解決という力技もあるかも。Kappa value?を見て一致率が高ければ力技もあるかな。低いとダメそうだけど</li>
-<li>Adversarial Learningを使うとcommon BiLSTMの部分がどういう学習をするのか直感的によく分からない。例があるのでもうちょっとよく読んだ方がいいかも(今は理解できなかった)</li>
+<li>Adversarial Learningを使うとcommon BiLSTMの部分がどういう学習をするのか直感的によく分からない。例があるのでもうちょっとよく読んだ方がいいかも(今は理解できなかった)</li>
 <li>データを追加しようとした時にAnnotatorが変わってしまっても問題なく学習できるのか不明。Annotatorを追加したときはDiscriminatorの識別対象を増やしていけば良さそうだが、そうするとDiscriminatorの学習が難しくなってしまう。もしかしたらECのannotatorが5人と少ないのはDiscriminatorの学習難易度を下げるためかもしれない(書いてないけど)</li>
 </ul>
 <h1>各章のメモ</h1>
@@ -1222,7 +1223,7 @@ pre.editor-colors .fold-marker:after {
 <li>クラウドソーシングで付与されたラベルを用いて損失関数を定義する</li>
 </ul>
 <h2>Worker Adversarial</h2>
-<p>例がいっぱい書いてあるがイマイチわからん。ラベリングしているworkerを判別するdiscriminatorを作るっぽい</p>
+<p>例がいっぱい書いてあるがイマイチわからん。ラベリングしているworkerを判別するdiscriminatorを作るっぽい</p>
 <ul>
 <li>4つのコンポーネントで構成される
 <ul>
@@ -1238,13 +1239,13 @@ pre.editor-colors .fold-marker:after {
 <ul>
 <li>label BiLSTMと呼ぶ</li>
 <li>crowd annotatorを識別するためだけに用いる</li>
-<li>入力はアノテーションで付与されたラベルのシーケンス(文字のシーケンスと対応するはず？)</li>
+<li>入力はアノテーションで付与されたラベルのシーケンス(文字のシーケンスと対応するはず？)</li>
 </ul>
 <h3>CNN</h3>
 <ul>
 <li>worker discriminatorのインプットを作成する
 <ul>
-<li>common BiLSTMとlabel BiLSTMの出力を、CNNの入力とする</li>
+<li>common BiLSTMとlabel BiLSTMの出力を、CNNの入力とする</li>
 </ul>
 </li>
 <li>window size = 5</li>
@@ -1253,8 +1254,8 @@ pre.editor-colors .fold-marker:after {
 <p>次の節でソフトマックスで確率に直す話が出てくる</p>
 <h3>Adversarial Training</h3>
 <ul>
-<li>baselineと違って外部のworker discriminatorの学習も必要</li>
-<li>目的関数はbaselineのNERと同じnegative log-liklihoodと、worker discriminatorのnegative log-liklihoodの2つを持つことになる</li>
+<li>baselineと違って外部のworker discriminatorの学習も必要</li>
+<li>目的関数はbaselineのNERと同じnegative log-liklihoodと、worker discriminatorのnegative log-liklihoodの2つを持つことになる</li>
 <li>discriminatorのlog-liklihoodを計算するために、ソフトマックスで確率を算出する</li>
 </ul>
 <h2>Experiments</h2>
@@ -1262,8 +1263,8 @@ pre.editor-colors .fold-marker:after {
 <li>対話とECの2つのドメインからセンテンスを集め、評価を行った</li>
 <li>大学生にアノテーションを行わせた
 <ul>
-<li>彼らには予め定義された種類のエンティティをセンテンスに対して付与するタスクを行わせた</li>
-<li>ガイドラインのドキュメントを与え、tipsを15分間教え、20個の例を提供した</li>
+<li>彼らには予め定義された種類のエンティティをセンテンスに対して付与するタスクを行わせた</li>
+<li>ガイドラインのドキュメントを与え、tipsを15分間教え、20個の例を提供した</li>
 </ul>
 </li>
 </ul>
@@ -1275,11 +1276,11 @@ pre.editor-colors .fold-marker:after {
 <li>ランダムに20,000センテンスを選択し、43人の大学生にアノテーションを行わせた</li>
 <li>アノテーションは人物名と歌の名前のエンティティの2つをラベリングさせた</li>
 <li>ラベル付は独立して行わせた。センテンスに対して3人が行うものもあったが無駄となるが、baselineのモデルでは多数決に利用できる</li>
-<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外した</li>
+<li>ラベル付の後にannotatorから報告があった不正なセンテンスを除外した</li>
 <li>最終的に16,948センテンスにアノテーションが行われた</li>
 <li>平均Kappa valueは0.6033
 <ul>
-<li>kappa valueはannotatorのラベルの一致を表す指標</li>
+<li>kappa valueはannotatorのラベルの一致を表す指標</li>
 </ul>
 </li>
 <li>1,000センテンスをランダムサンプリングし、熟練者によるアノテーションを実施した
